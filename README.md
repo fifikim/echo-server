@@ -44,7 +44,7 @@ Automated linting and testing has been incorporated into the build process. Howe
 
 Run the linter:
 ```
-./gradlew :app:checkstyleMain
+./gradlew :app:checkstyleTest
 ```
 
 ### Testing <a name = "testing"></a>
