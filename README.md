@@ -9,7 +9,6 @@ After the server establishes a connection with the client, the server will accep
 - [Getting Started](#getting_started)
   - [Requirements](#requirements)
   - [Installation](#installation)
-  - [Formatting](#formatting)
   - [Linting](#linting)
   - [Testing](#testing)
 - [Usage](#usage)
