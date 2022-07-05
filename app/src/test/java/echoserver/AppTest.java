@@ -2,6 +2,7 @@ package echoserver;
 
 import static org.junit.Assert.assertEquals;
 
+import java.net.Socket;
 import org.junit.Test;
 
 public class AppTest {

@@ -1,11 +1,17 @@
 package echoserver;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 public class EchoServer {
-  public EchoServer() {
+  ServerSocket serverSocket;
+
+  public static void main(String[] args) throws IOException {
+    ServerSocket serverSocket = new ServerSocket(8080);
   }
 
-  public static void main(String[] args) {
-    EchoServer server = new EchoServer();
+  public int getPort() {
+    return serverSocket.getLocalPort();
   }
 }
 

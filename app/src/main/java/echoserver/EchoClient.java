@@ -1,12 +1,11 @@
 package echoserver;
 
+import java.io.IOException;
+import java.net.Socket;
+
 public class EchoClient {
-  public EchoClient() {
-
-  }
-
-  public static void main(String[] args) {
-    EchoClient client = new EchoClient();
+  public void startConnection(String ip, int port) throws IOException {
+    Socket clientSocket = new Socket(ip, port);
   }
 }
 
