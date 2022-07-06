@@ -2,13 +2,24 @@
 //
 //import static org.junit.Assert.assertEquals;
 //
+//import echoserver.server.EchoServer;
+//import java.io.IOException;
 //import org.junit.Test;
 //
 //public class EchoServerTest {
-//  @Test public void serverOpensCorrectPort() {
-//    EchoServer testServer = new EchoServer();
+//  @Test
+//  public void serverSocketIsCreated() throws IOException {
+//  }
 //
-//    int port = testServer.getPort();
-//    assertEquals(port, 8080);
+//  @Test
+//  public void serverListensToCorrectPort() throws IOException {
+//  }
+//
+//  @Test
+//  public void serverAcceptsClientConnection() throws IOException {
+//  }
+//
+//  @Test
+//  public void serverClosesConnection() throws IOException {
 //  }
 //}

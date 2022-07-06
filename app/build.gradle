@@ -23,8 +23,14 @@ test {
     useJUnit()
 }
 
-application {
-    mainClass = 'echoserver.App'
+task(runServer, type: JavaExec) {
+    mainClass = 'echoserver.server.ServerRunner'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runClient, dependsOn: classes, type: JavaExec) {
+    mainClass = 'echoserver.client.ClientRunner'
+    classpath = sourceSets.main.runtimeClasspath
 }
 
 checkstyle {
