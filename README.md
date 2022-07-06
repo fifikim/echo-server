@@ -44,7 +44,7 @@ Automated linting and testing has been incorporated into the build process. Howe
 
 Run the linter for source code:
 ```
-./gradlew :app:checkstyleMain
+./gradlew :app:checkstyleTest
 ```
 
 Run the linter for the test suite:
