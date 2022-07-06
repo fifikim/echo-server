@@ -1,18 +1,21 @@
 package echoserver.client;
 
+import echoserver.Utils;
 import java.io.IOException;
-import java.net.Socket;
 
 public class EchoClient {
+  private EchoClientSocket clientSocket;
+
   public void start(String hostName, int port) throws IOException {
-    System.out.println(
-            "EchoClient attempting to connect to "
+    clientSocket = new EchoClientSocket();
+    Utils.print(
+            "EchoClient initialized. Attempting to connect to server at "
                     + hostName + ":" + port + "...");
 
-    Socket clientSocket = new Socket(hostName, port);
-    System.out.println("Connected!");
+    clientSocket.connect(hostName, port);
+    Utils.print("Connected to EchoServer!");
 
     clientSocket.close();
-    System.out.println("Disconnecting... Goodbye.");
+    Utils.print("Disconnecting... Goodbye.");
   }
 }

@@ -1,20 +1,22 @@
 package echoserver.server;
 
+import echoserver.Utils;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public class EchoServer {
-  public void start(int port) throws IOException {
-    ServerSocket serverSocket = new ServerSocket(port);
-    System.out.println(
-            "EchoServer initialized and listening to Port "
-                    + serverSocket.getLocalPort() + "...");
+  private EchoServerSocket serverSocket;
 
-    Socket clientSocket = serverSocket.accept();
-    System.out.println("Connection successfully established!");
+  public void start(int port) throws IOException {
+    serverSocket = new EchoServerSocket();
+
+    serverSocket.open(port);
+    Utils.print(
+            "EchoServer initialized. Listening for clients on Port " + port + "...");
+
+    serverSocket.acceptClient();
+    Utils.print("Connected to EchoClient!");
 
     serverSocket.close();
-    System.out.println("Closing connection... Goodbye.");
+    Utils.print("Closing connection... Goodbye.");
   }
 }
