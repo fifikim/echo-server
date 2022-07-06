@@ -3,23 +3,22 @@
 //import static org.junit.Assert.assertEquals;
 //
 //import echoserver.server.EchoServer;
-//import java.io.IOException;
 //import org.junit.Test;
 //
 //public class EchoServerTest {
 //  @Test
-//  public void serverSocketIsCreated() throws IOException {
+//  public void createsSocket() {
 //  }
 //
 //  @Test
-//  public void serverListensToCorrectPort() throws IOException {
+//  public void listensToCorrectPort() {
 //  }
 //
 //  @Test
-//  public void serverAcceptsClientConnection() throws IOException {
+//  public void serverAcceptsClientConnection() {
 //  }
 //
 //  @Test
-//  public void serverClosesConnection() throws IOException {
+//  public void serverClosesConnection() {
 //  }
 //}
