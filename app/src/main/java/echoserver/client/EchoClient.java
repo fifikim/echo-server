@@ -1,17 +1,17 @@
 package echoserver.client;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.net.Socket;
 
 public class EchoClient {
-  private final EchoClientSocket clientSocket;
+  private final ClientSocketInterface clientSocketInterface;
 
-  public EchoClient(EchoClientSocket echoClientSocket) {
-    this.clientSocket = echoClientSocket;
+  public EchoClient(ClientSocketInterface clientSocketInterface) {
+    this.clientSocketInterface = clientSocketInterface;
   }
 
-  public void start(InetAddress host, int port) throws IOException {
-    clientSocket.connect(host, port);
-    clientSocket.close();
+  public void start(Socket clientSocket) throws IOException {
+    clientSocketInterface.connect(clientSocket);
+    clientSocketInterface.close(clientSocket);
   }
 }

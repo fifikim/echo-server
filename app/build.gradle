@@ -33,6 +33,7 @@ task(runServer, type: JavaExec) {
 task(runClient, dependsOn: classes, type: JavaExec) {
     mainClass = 'echoserver.client.ClientRunner'
     classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
 }
 
 checkstyle {

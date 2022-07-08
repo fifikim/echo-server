@@ -2,6 +2,7 @@ package echoserver.client;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.Socket;
 
 public class ClientRunner {
   public static void main(String[] args) throws IOException {
@@ -13,10 +14,11 @@ public class ClientRunner {
       port = Integer.parseInt(args[1]);
     }
 
-    EchoClientSocket echoClientSocket = new EchoClientSocket();
-    EchoClient echoClient = new EchoClient(echoClientSocket);
+    Socket clientSocket = new Socket(host, port);
+    ClientSocketWrapper clientSocketWrapper = new ClientSocketWrapper(clientSocket);
 
-    echoClient.start(host, port);
+    EchoClient echoClient = new EchoClient(clientSocketWrapper);
+    echoClient.start(clientSocket);
   }
 }
 
