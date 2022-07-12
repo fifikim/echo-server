@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import echoserver.SocketIo;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,14 +13,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ServerSocketTest {
+  private final String testMessage = "test message";
   private ServerSocket serverSocket;
   private ServerSocketInterface serverSocketInterface;
   private Socket clientSocket;
+  private SocketIo socketIo;
 
   @Before
   public void initialize() {
     serverSocket = mock(ServerSocket.class);
-    serverSocketInterface = new ServerSocketWrapper(serverSocket);
+    socketIo = mock(SocketIo.class);
+    serverSocketInterface = new ServerSocketWrapper(serverSocket, socketIo);
     clientSocket = mock(Socket.class);
   }
 
@@ -40,12 +44,28 @@ public class ServerSocketTest {
   }
 
   @Test
-  public void closesConnection() throws IOException {
+  public void receivesClientMessage() throws IOException {
+    when(socketIo.receive()).thenReturn(testMessage);
+    String actualReceived = serverSocketInterface.receiveMessage();
+
+    assertEquals(testMessage, actualReceived);
+  }
+
+  @Test
+  public void echoesClientMessage() throws IOException {
+    serverSocketInterface.sendEcho(testMessage);
+
+    verify(socketIo).send(testMessage);
+  }
+
+  @Test
+  public void closesConnectionAndStreams() throws IOException {
     when(serverSocket.accept()).thenReturn(clientSocket);
     serverSocketInterface.acceptClient();
-    serverSocketInterface.close();
+    serverSocketInterface.closeSocket();
 
     verify(serverSocket).close();
     verify(clientSocket).close();
+    verify(socketIo).close();
   }
 }

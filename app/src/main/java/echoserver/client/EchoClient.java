@@ -11,6 +11,14 @@ public class EchoClient {
 
   public void start() throws IOException {
     clientSocketInterface.verifyConnection();
-    clientSocketInterface.close();
+
+    String userInput;
+
+    if ((userInput = clientSocketInterface.getMessage()) != null) {
+      clientSocketInterface.sendMessage(userInput);
+      clientSocketInterface.receiveResponse();
+    }
+
+    clientSocketInterface.closeSocket();
   }
 }
