@@ -15,7 +15,9 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:3.+'
     implementation 'com.google.guava:guava:30.1.1-jre'
 }
 
@@ -23,8 +25,15 @@ test {
     useJUnit()
 }
 
-application {
-    mainClass = 'echoserver.App'
+task(runServer, type: JavaExec) {
+    mainClass = 'echoserver.server.ServerRunner'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runClient, dependsOn: classes, type: JavaExec) {
+    mainClass = 'echoserver.client.ClientRunner'
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
 }
 
 checkstyle {
