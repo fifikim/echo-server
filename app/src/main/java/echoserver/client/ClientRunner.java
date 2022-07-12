@@ -18,7 +18,7 @@ public class ClientRunner {
     ClientSocketWrapper clientSocketWrapper = new ClientSocketWrapper(clientSocket);
 
     EchoClient echoClient = new EchoClient(clientSocketWrapper);
-    echoClient.start(clientSocket);
+    echoClient.start();
   }
 }
 

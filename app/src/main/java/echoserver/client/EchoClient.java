@@ -1,7 +1,6 @@
 package echoserver.client;
 
 import java.io.IOException;
-import java.net.Socket;
 
 public class EchoClient {
   private final ClientSocketInterface clientSocketInterface;
@@ -10,8 +9,8 @@ public class EchoClient {
     this.clientSocketInterface = clientSocketInterface;
   }
 
-  public void start(Socket clientSocket) throws IOException {
-    clientSocketInterface.connect(clientSocket);
-    clientSocketInterface.close(clientSocket);
+  public void start() throws IOException {
+    clientSocketInterface.verifyConnection();
+    clientSocketInterface.close();
   }
 }

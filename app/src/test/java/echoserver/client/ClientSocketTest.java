@@ -7,23 +7,31 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.Socket;
+import org.junit.Before;
 import org.junit.Test;
 
 public class ClientSocketTest {
-  int port = 1234;
-  Socket mockClientSocket = mock(Socket.class);
-  private final ClientSocketInterface socketInterface = new ClientSocketWrapper(mockClientSocket);
+  private Socket clientSocket;
+  private ClientSocketInterface socketInterface;
+
+  @Before
+  public void initialize() {
+    clientSocket = mock(Socket.class);
+    socketInterface = new ClientSocketWrapper(clientSocket);
+  }
 
   @Test
-  public void connectsToGivenAddress() throws IOException {
-    when(mockClientSocket.getPort()).thenReturn(port);
-    int expectedPort = socketInterface.connect(mockClientSocket);
-    assertEquals(port, expectedPort);
+  public void verifiesConnectedToServerPort() throws IOException {
+    int expectedPort = 1234;
+    when(clientSocket.getPort()).thenReturn(expectedPort);
+    int actualPort = socketInterface.verifyConnection();
+
+    assertEquals(expectedPort, actualPort);
   }
 
   @Test
   public void closesSocket() throws IOException {
-    socketInterface.close(mockClientSocket);
-    verify(mockClientSocket).close();
+    socketInterface.close();
+    verify(clientSocket).close();
   }
 }

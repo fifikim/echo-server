@@ -5,35 +5,40 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
+import org.junit.Before;
 import org.junit.Test;
 
 public class EchoServerTest {
-  ServerSocketInterface serverSocketInterface = mock(ServerSocketWrapper.class);
-  EchoServer echoServer = new EchoServer(serverSocketInterface);
-  ServerSocket mockServerSocket = mock(ServerSocket.class);
-  Socket mockClientSocket = mock(Socket.class);
-  int port = 1234;
+  private ServerSocketInterface serverSocketInterface;
+  private EchoServer echoServer;
+  private Socket clientSocket;
 
-  @Test
-  public void startsSocketAtGivenPort() throws IOException {
-    echoServer.start(port);
-    verify(serverSocketInterface).open(port);
+  @Before public void initialize() {
+    serverSocketInterface = mock(ServerSocketWrapper.class);
+    echoServer = new EchoServer(serverSocketInterface);
+    clientSocket = mock(Socket.class);
   }
 
   @Test
-  public void serverAcceptsClientConnection() throws IOException {
-    when(serverSocketInterface.open(port)).thenReturn(mockServerSocket);
-    echoServer.start(port);
-    verify(serverSocketInterface).acceptClient(mockServerSocket);
+  public void startsServerSocket() throws IOException {
+    echoServer.start();
+
+    verify(serverSocketInterface).verifyConnection();
+  }
+
+  @Test
+  public void acceptsClientConnection() throws IOException {
+    echoServer.start();
+
+    verify(serverSocketInterface).acceptClient();
   }
 
   @Test
   public void serverClosesConnection() throws IOException {
-    when(serverSocketInterface.open(port)).thenReturn(mockServerSocket);
-    when(serverSocketInterface.acceptClient(mockServerSocket)).thenReturn(mockClientSocket);
-    echoServer.start(port);
-    verify(serverSocketInterface).close(mockServerSocket, mockClientSocket);
+    when(serverSocketInterface.acceptClient()).thenReturn(clientSocket);
+    echoServer.start();
+
+    verify(serverSocketInterface).close();
   }
 }
