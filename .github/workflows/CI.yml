@@ -20,8 +20,11 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
-      - name: Run the linter
+      - name: Run the linter for source code
         run: ./gradlew :app:checkstyleMain
+
+      - name: Run the linter for tests
+        run: ./gradlew :app:checkstyleTest
 
       - name: Run test suite
         run: ./gradlew test

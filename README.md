@@ -42,7 +42,12 @@ Automated linting and testing has been incorporated into the build process. Howe
 
 ### Linting <a name = "linting"></a>
 
-Run the linter:
+Run the linter for source code:
+```
+./gradlew :app:checkstyleMain
+```
+
+Run the linter for the test suite:
 ```
 ./gradlew :app:checkstyleTest
 ```
@@ -58,9 +63,23 @@ Run tests:
 
 ### Launch the program <a name = "launching"></a>
 
-From program directory:
+First run the server:
 ```
-./gradlew run
+./gradlew runServer
+```
+
+Run the client from a separate terminal:
+```
+./gradlew runClient
+```
+
+If you wish to override the default settings for port number and host name, you may instead use the following commands (using the same port number for both):
+
+```
+./gradlew runServer --args <port-number>
+```
+```
+./gradlew runClient --args="<host-name> <port-number>"
 ```
 
 ### Instructions
