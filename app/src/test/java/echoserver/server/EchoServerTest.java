@@ -1,23 +1,21 @@
 package echoserver.server;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.net.Socket;
 import org.junit.Before;
 import org.junit.Test;
 
 public class EchoServerTest {
   private ServerSocketInterface serverSocketInterface;
   private EchoServer echoServer;
-  private Socket clientSocket;
 
   @Before public void initialize() {
     serverSocketInterface = mock(ServerSocketWrapper.class);
     echoServer = new EchoServer(serverSocketInterface);
-    clientSocket = mock(Socket.class);
   }
 
   @Test
@@ -32,6 +30,22 @@ public class EchoServerTest {
     echoServer.start();
 
     verify(serverSocketInterface).acceptClient();
+  }
+
+  @Test
+  public void echoesResponseIfMessageReceived() throws IOException {
+    when(serverSocketInterface.receiveMessage()).thenReturn("test message");
+    echoServer.start();
+
+    verify(serverSocketInterface).sendEcho("test message");
+  }
+
+  @Test
+  public void doesNotEchoIfMessageIsNull() throws IOException {
+    when(serverSocketInterface.receiveMessage()).thenReturn(null);
+    echoServer.start();
+
+    verify(serverSocketInterface, never()).sendEcho(null);
   }
 
   @Test

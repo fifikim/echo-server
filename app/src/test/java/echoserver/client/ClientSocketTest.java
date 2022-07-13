@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ClientSocketTest {
+  private final String testMessage = "test message";
   private Socket clientSocket;
   private SocketIo socketIo;
   private ClientSocketInterface socketInterface;
@@ -35,7 +36,6 @@ public class ClientSocketTest {
 
   @Test
   public void getsUserInputtedMessage() {
-    String testMessage = "this is a test message";
     ByteArrayInputStream in = new ByteArrayInputStream(testMessage.getBytes());
     System.setIn(in);
 
@@ -47,10 +47,17 @@ public class ClientSocketTest {
 
   @Test
   public void sendsMessageToServer() throws IOException {
+    socketInterface.sendMessage(testMessage);
+
+    verify(socketIo).send(testMessage);
   }
 
   @Test
   public void receivesResponseFromServer() throws IOException {
+    when(socketIo.receive()).thenReturn(testMessage);
+    String actualReceived = socketInterface.receiveResponse();
+
+    assertEquals(testMessage, actualReceived);
   }
 
   @Test

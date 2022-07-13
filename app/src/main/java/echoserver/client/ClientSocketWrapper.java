@@ -44,9 +44,10 @@ public class ClientSocketWrapper implements ClientSocketInterface {
     ConsoleIo.print("You sent: " + message);
   }
 
-  public void receiveResponse() throws IOException {
+  public String receiveResponse() throws IOException {
     String message = socketIo.receive();
     ConsoleIo.print("Response from EchoServer: " + message);
+    return message;
   }
 
   public void closeSocket() throws IOException {

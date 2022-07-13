@@ -9,7 +9,7 @@ import java.net.Socket;
 public class ServerSocketWrapper implements ServerSocketInterface {
   private final ServerSocket serverSocket;
   private Socket clientSocket;
-  private SocketIo socketIo;
+  private final SocketIo socketIo;
 
   public ServerSocketWrapper(ServerSocket serverSocket, SocketIo socketIo) {
     this.serverSocket = serverSocket;

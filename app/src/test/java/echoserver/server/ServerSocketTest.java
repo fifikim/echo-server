@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ServerSocketTest {
+  private final String testMessage = "test message";
   private ServerSocket serverSocket;
   private ServerSocketInterface serverSocketInterface;
   private Socket clientSocket;
@@ -44,10 +45,17 @@ public class ServerSocketTest {
 
   @Test
   public void receivesClientMessage() throws IOException {
+    when(socketIo.receive()).thenReturn(testMessage);
+    String actualReceived = serverSocketInterface.receiveMessage();
+
+    assertEquals(testMessage, actualReceived);
   }
 
   @Test
   public void echoesClientMessage() throws IOException {
+    serverSocketInterface.sendEcho(testMessage);
+
+    verify(socketIo).send(testMessage);
   }
 
   @Test
