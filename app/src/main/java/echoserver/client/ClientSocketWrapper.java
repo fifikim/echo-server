@@ -10,9 +10,9 @@ public class ClientSocketWrapper implements ClientSocketInterface {
   private final Socket clientSocket;
   private final SocketIo socketIo;
 
-  public ClientSocketWrapper(Socket clientSocket, SocketIo socketIo) {
+  public ClientSocketWrapper(Socket clientSocket) throws IOException {
     this.clientSocket = clientSocket;
-    this.socketIo = socketIo;
+    socketIo = createSocketStreams();
   }
 
   public int verifyConnection() throws IOException {
@@ -21,9 +21,6 @@ public class ClientSocketWrapper implements ClientSocketInterface {
 
     ConsoleIo.print(
             "Successfully connected to EchoServer at " + host + ":" + port + "!");
-
-    socketIo.createSocketInput(clientSocket);
-    socketIo.createSocketOutput(clientSocket);
 
     return port;
   }
@@ -39,9 +36,10 @@ public class ClientSocketWrapper implements ClientSocketInterface {
     return null;
   }
 
-  public void sendMessage(String message) {
+  public String sendMessage(String message) {
     socketIo.send(message);
     ConsoleIo.print("You sent: " + message);
+    return message;
   }
 
   public String receiveResponse() throws IOException {
@@ -52,7 +50,11 @@ public class ClientSocketWrapper implements ClientSocketInterface {
 
   public void closeSocket() throws IOException {
     clientSocket.close();
-    socketIo.close();
+    socketIo.closeStreams();
     ConsoleIo.print("EchoClient disconnected.");
+  }
+
+  private SocketIo createSocketStreams() throws IOException {
+    return new SocketIo(clientSocket);
   }
 }

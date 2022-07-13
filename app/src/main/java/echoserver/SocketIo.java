@@ -7,34 +7,36 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class SocketIo {
-  BufferedReader in;
-  PrintWriter out;
+  private final Socket clientSocket;
+  public BufferedReader in;
+  public PrintWriter out;
 
-  public SocketIo() {
-    this.in = null;
-    this.out = null;
+  public SocketIo(Socket clientSocket) throws IOException {
+    this.clientSocket = clientSocket;
+    in = createSocketInput();
+    out = createSocketOutput();
   }
 
-  public BufferedReader createSocketInput(Socket clientSocket) throws IOException {
-    in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-    return in;
-  }
-
-  public PrintWriter createSocketOutput(Socket clientSocket) throws IOException {
-    out = new PrintWriter(clientSocket.getOutputStream(), true);
-    return out;
-  }
-
-  public void send(String message) {
+  public String send(String message) {
     out.println(message);
+    return message;
   }
 
   public String receive() throws IOException {
     return in.readLine();
   }
 
-  public void close() throws IOException {
+  public boolean closeStreams() throws IOException {
     in.close();
     out.close();
+    return true;
+  }
+
+  private BufferedReader createSocketInput() throws IOException {
+    return new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+  }
+
+  private PrintWriter createSocketOutput() throws IOException {
+    return new PrintWriter(clientSocket.getOutputStream(), true);
   }
 }

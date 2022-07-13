@@ -14,48 +14,40 @@ import org.junit.Test;
 
 public class SocketIoTest {
   private final String testMessage = "test message";
-  private Socket clientSocket;
   private SocketIo socketIo;
-  private ByteArrayInputStream inputStream;
   private ByteArrayOutputStream outputStream;
 
   @Before
-  public void initialize() {
-    socketIo = new SocketIo();
-    clientSocket = mock(Socket.class);
-    inputStream = new ByteArrayInputStream(testMessage.getBytes());
+  public void initialize() throws IOException {
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(testMessage.getBytes());
     outputStream = new ByteArrayOutputStream();
-  }
 
-  @Test
-  public void createsSocketInputStream() throws IOException {
+    Socket clientSocket = mock(Socket.class);
     when(clientSocket.getInputStream()).thenReturn(inputStream);
-
-    assertNotNull(socketIo.createSocketInput(clientSocket));
-  }
-
-  @Test
-  public void createsSocketOutputStream() throws IOException {
     when(clientSocket.getOutputStream()).thenReturn(outputStream);
 
-    assertNotNull(socketIo.createSocketOutput(clientSocket));
+    socketIo = new SocketIo(clientSocket);
+  }
+
+  @Test
+  public void createsSocketInputStream() {
+    assertNotNull(socketIo.in);
+  }
+
+  @Test
+  public void createsSocketOutputStream() {
+    assertNotNull(socketIo.out);
   }
 
   @Test
   public void receivesSocketStreamInput() throws IOException {
-    when(clientSocket.getInputStream()).thenReturn(inputStream);
-
-    socketIo.createSocketInput(clientSocket);
     String actualReceived = socketIo.receive();
 
     assertEquals(testMessage, actualReceived);
   }
 
   @Test
-  public void sendsSocketStreamOutput() throws IOException {
-    when(clientSocket.getOutputStream()).thenReturn(outputStream);
-
-    socketIo.createSocketOutput(clientSocket);
+  public void sendsSocketStreamOutput() {
     socketIo.send(testMessage);
 
     assertEquals(testMessage, outputStream.toString().trim());

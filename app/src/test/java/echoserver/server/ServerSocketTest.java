@@ -1,11 +1,14 @@
 package echoserver.server;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import echoserver.SocketIo;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,16 +18,27 @@ import org.junit.Test;
 public class ServerSocketTest {
   private final String testMessage = "test message";
   private ServerSocket serverSocket;
-  private ServerSocketInterface serverSocketInterface;
   private Socket clientSocket;
   private SocketIo socketIo;
+  private ServerSocketInterface serverSocketInterface;
 
   @Before
-  public void initialize() {
+  public void initialize() throws IOException {
     serverSocket = mock(ServerSocket.class);
-    socketIo = mock(SocketIo.class);
-    serverSocketInterface = new ServerSocketWrapper(serverSocket, socketIo);
     clientSocket = mock(Socket.class);
+    when(serverSocket.accept()).thenReturn(clientSocket);
+
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(testMessage.getBytes());
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    when(clientSocket.getInputStream()).thenReturn(inputStream);
+    when(clientSocket.getOutputStream()).thenReturn(outputStream);
+
+    socketIo = mock(SocketIo.class);
+    when(socketIo.send(testMessage)).thenReturn(testMessage);
+    when(socketIo.receive()).thenReturn(testMessage);
+    when(socketIo.closeStreams()).thenReturn(true);
+
+    serverSocketInterface = new ServerSocketWrapper(serverSocket);
   }
 
   @Test
@@ -38,14 +52,12 @@ public class ServerSocketTest {
 
   @Test
   public void acceptsClientConnection() throws IOException {
-    when(serverSocket.accept()).thenReturn(clientSocket);
-
     assertEquals(clientSocket, serverSocketInterface.acceptClient());
   }
 
   @Test
   public void receivesClientMessage() throws IOException {
-    when(socketIo.receive()).thenReturn(testMessage);
+    serverSocketInterface.acceptClient();
     String actualReceived = serverSocketInterface.receiveMessage();
 
     assertEquals(testMessage, actualReceived);
@@ -53,19 +65,19 @@ public class ServerSocketTest {
 
   @Test
   public void echoesClientMessage() throws IOException {
+    serverSocketInterface.acceptClient();
     serverSocketInterface.sendEcho(testMessage);
 
-    verify(socketIo).send(testMessage);
+    assertEquals(testMessage, serverSocketInterface.sendEcho(testMessage));
   }
 
   @Test
   public void closesConnectionAndStreams() throws IOException {
-    when(serverSocket.accept()).thenReturn(clientSocket);
     serverSocketInterface.acceptClient();
     serverSocketInterface.closeSocket();
 
     verify(serverSocket).close();
     verify(clientSocket).close();
-    verify(socketIo).close();
+    assertTrue(socketIo.closeStreams());
   }
 }

@@ -7,7 +7,7 @@ public interface ClientSocketInterface {
 
   String getMessage();
 
-  void sendMessage(String message) throws IOException;
+  String sendMessage(String message) throws IOException;
 
   String receiveResponse() throws IOException;
 

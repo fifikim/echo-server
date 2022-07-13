@@ -10,7 +10,7 @@ public interface ServerSocketInterface {
 
   String receiveMessage() throws IOException;
 
-  void sendEcho(String message) throws IOException;
+  String sendEcho(String message) throws IOException;
 
   void closeSocket() throws IOException;
 }

@@ -8,13 +8,11 @@ import java.net.Socket;
 
 public class ServerSocketWrapper implements ServerSocketInterface {
   private final ServerSocket serverSocket;
-  private Socket clientSocket;
-  private final SocketIo socketIo;
+  private Socket clientSocket = null;
+  private SocketIo socketIo = null;
 
-  public ServerSocketWrapper(ServerSocket serverSocket, SocketIo socketIo) {
+  public ServerSocketWrapper(ServerSocket serverSocket) {
     this.serverSocket = serverSocket;
-    this.socketIo = socketIo;
-    this.clientSocket = null;
   }
 
   public int verifyConnection() {
@@ -28,8 +26,7 @@ public class ServerSocketWrapper implements ServerSocketInterface {
     clientSocket = serverSocket.accept();
     ConsoleIo.print("EchoClient now connected!");
 
-    socketIo.createSocketInput(clientSocket);
-    socketIo.createSocketOutput(clientSocket);
+    socketIo = createSocketStreams();
 
     return clientSocket;
   }
@@ -44,15 +41,20 @@ public class ServerSocketWrapper implements ServerSocketInterface {
     return message;
   }
 
-  public void sendEcho(String message) {
+  public String sendEcho(String message) {
     socketIo.send(message);
     ConsoleIo.print("Message echoed!");
+    return message;
   }
 
   public void closeSocket() throws IOException {
     clientSocket.close();
     serverSocket.close();
-    socketIo.close();
+    socketIo.closeStreams();
     ConsoleIo.print("EchoServer connection closed.");
+  }
+
+  private SocketIo createSocketStreams() throws IOException {
+    return new SocketIo(clientSocket);
   }
 }

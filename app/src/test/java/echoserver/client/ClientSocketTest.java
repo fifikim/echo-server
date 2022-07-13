@@ -1,12 +1,14 @@
 package echoserver.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import echoserver.SocketIo;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import org.junit.Before;
@@ -19,10 +21,18 @@ public class ClientSocketTest {
   private ClientSocketInterface socketInterface;
 
   @Before
-  public void initialize() {
+  public void initialize() throws IOException {
     clientSocket = mock(Socket.class);
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(testMessage.getBytes());
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    when(clientSocket.getInputStream()).thenReturn(inputStream);
+    when(clientSocket.getOutputStream()).thenReturn(outputStream);
+
     socketIo = mock(SocketIo.class);
-    socketInterface = new ClientSocketWrapper(clientSocket, socketIo);
+    when(socketIo.send(testMessage)).thenReturn(testMessage);
+    when(socketIo.closeStreams()).thenReturn(true);
+
+    socketInterface = new ClientSocketWrapper(clientSocket);
   }
 
   @Test
@@ -49,7 +59,7 @@ public class ClientSocketTest {
   public void sendsMessageToServer() throws IOException {
     socketInterface.sendMessage(testMessage);
 
-    verify(socketIo).send(testMessage);
+    assertEquals(testMessage, socketInterface.sendMessage(testMessage));
   }
 
   @Test
@@ -65,6 +75,6 @@ public class ClientSocketTest {
     socketInterface.closeSocket();
 
     verify(clientSocket).close();
-    verify(socketIo).close();
+    assertTrue(socketIo.closeStreams());
   }
 }
