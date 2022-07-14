@@ -1,15 +1,19 @@
 package echoserver.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import echoserver.SocketIo;
+import echoserver.TestHelpers;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import org.junit.After;
 import org.junit.Test;
 
 public class ClientSocketTest {
@@ -23,14 +27,13 @@ public class ClientSocketTest {
   public void initialize() throws IOException {
     inputStream = new ByteArrayInputStream(testMessage.getBytes());
     outputStream = new ByteArrayOutputStream();
+    System.setIn(inputStream);
 
     clientSocket = mock(Socket.class);
     when(clientSocket.getInputStream()).thenReturn(inputStream);
     when(clientSocket.getOutputStream()).thenReturn(outputStream);
 
-    socketIo = mock(SocketIo.class);
-    when(socketIo.send(testMessage)).thenReturn(testMessage);
-
+    socketIo = TestHelpers.socketIo(testMessage);
     socketInterface = new ClientSocketWrapper(clientSocket);
   }
 
@@ -46,6 +49,11 @@ public class ClientSocketTest {
     socketInterface = new ClientSocketWrapper(clientSocket);
   }
 
+  @After
+  public void tearDown() {
+    TestHelpers.restoreInitialStreams();
+  }
+
   @Test
   public void verifiesConnectedToServerPort() throws IOException {
     initialize();
@@ -59,8 +67,6 @@ public class ClientSocketTest {
   @Test
   public void getsUserInputtedMessage() throws IOException {
     initialize();
-    ByteArrayInputStream in = new ByteArrayInputStream(testMessage.getBytes());
-    System.setIn(in);
 
     String actualReceived = socketInterface.getMessage();
 
@@ -79,10 +85,30 @@ public class ClientSocketTest {
   @Test
   public void receivesResponseFromServer() throws IOException {
     initialize();
-    when(socketIo.receive()).thenReturn(testMessage);
+
     String actualReceived = socketInterface.receiveResponse();
 
     assertEquals(testMessage, actualReceived);
+  }
+
+  @Test
+  public void quitReturnsTrueIfMessageEqualsQuit() throws IOException {
+    initialize();
+    boolean result = socketInterface.quit("quit");
+    boolean negativeResult = socketInterface.quit("quiet");
+
+    assertTrue(result);
+    assertFalse(negativeResult);
+  }
+
+  @Test
+  public void quitHandlesUpperCaseInputAndWhiteSpace() throws IOException {
+    initialize();
+    boolean upperCase = socketInterface.quit("QUIT");
+    boolean whiteSpace = socketInterface.quit(" quit    ");
+
+    assertTrue(upperCase);
+    assertTrue(whiteSpace);
   }
 
   @Test

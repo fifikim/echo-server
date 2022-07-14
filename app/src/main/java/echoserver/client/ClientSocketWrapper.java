@@ -2,20 +2,24 @@ package echoserver.client;
 
 import echoserver.ConsoleIo;
 import echoserver.SocketIo;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
 
 public class ClientSocketWrapper implements ClientSocketInterface {
   private final Socket clientSocket;
   private final SocketIo socketIo;
+  private BufferedReader consoleIn;
 
   public ClientSocketWrapper(Socket clientSocket) throws IOException {
     this.clientSocket = clientSocket;
+    consoleIn = new BufferedReader(new InputStreamReader(System.in));
     socketIo = createSocketStreams();
   }
 
-  public int verifyConnection() throws IOException {
+  public int verifyConnection() {
     InetAddress host = clientSocket.getInetAddress();
     int port = clientSocket.getPort();
 
@@ -28,7 +32,7 @@ public class ClientSocketWrapper implements ClientSocketInterface {
   public String getMessage() {
     ConsoleIo.print("Enter your message: ");
     try {
-      String message = ConsoleIo.input();
+      String message = consoleIn.readLine();
       return message;
     } catch (IOException e) {
       ConsoleIo.err("Unable to get message ", e);
@@ -46,6 +50,16 @@ public class ClientSocketWrapper implements ClientSocketInterface {
     String message = socketIo.receive();
     ConsoleIo.print("Response from EchoServer: " + message);
     return message;
+  }
+
+  public boolean quit(String message) {
+    boolean quitStatus = "quit".equalsIgnoreCase(message.strip());
+
+    if (quitStatus) {
+      ConsoleIo.print("Terminating session...");
+    }
+
+    return quitStatus;
   }
 
   public void closeSocket() throws IOException {
