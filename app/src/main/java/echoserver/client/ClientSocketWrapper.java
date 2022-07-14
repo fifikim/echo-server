@@ -49,7 +49,13 @@ public class ClientSocketWrapper implements ClientSocketInterface {
   }
 
   public boolean quit(String message) {
-    return "quit".equalsIgnoreCase(message.strip());
+    boolean quitStatus = "quit".equalsIgnoreCase(message.strip());
+
+    if (quitStatus) {
+      ConsoleIo.print("Terminating session...");
+    }
+
+    return quitStatus;
   }
 
   public void closeSocket() throws IOException {

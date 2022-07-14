@@ -13,8 +13,6 @@ public interface ServerSocketInterface {
 
   String sendEcho(String message) throws IOException;
 
-  boolean quit(String message) throws IOException;
-
   void closeSocket() throws IOException;
 
   SocketIo createSocketStreams() throws IOException;

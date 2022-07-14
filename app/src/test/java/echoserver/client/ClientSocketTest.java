@@ -90,6 +90,7 @@ public class ClientSocketTest {
 
   @Test
   public void quitReturnsTrueIfMessageEqualsQuit() throws IOException {
+    initialize();
     boolean result = socketInterface.quit("quit");
     boolean negativeResult = socketInterface.quit("quiet");
 
@@ -99,6 +100,7 @@ public class ClientSocketTest {
 
   @Test
   public void quitHandlesUpperCaseInputAndWhiteSpace() throws IOException {
+    initialize();
     boolean upperCase = socketInterface.quit("QUIT");
     boolean whiteSpace = socketInterface.quit(" quit    ");
 

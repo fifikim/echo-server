@@ -48,16 +48,6 @@ public class ServerSocketWrapper implements ServerSocketInterface {
     return message;
   }
 
-  public boolean quit(String message) {
-    boolean quitStatus = "quit".equalsIgnoreCase(message.strip());
-
-    if (quitStatus) {
-      ConsoleIo.print("Session terminated by EchoClient.");
-    }
-
-    return quitStatus;
-  }
-
   public void closeSocket() throws IOException {
     clientSocket.close();
     serverSocket.close();

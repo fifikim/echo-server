@@ -90,24 +90,6 @@ public class ServerSocketTest {
   }
 
   @Test
-  public void quitReturnsTrueIfMessageEqualsQuit() throws IOException {
-    boolean result = serverSocketInterface.quit("quit");
-    boolean negativeResult = serverSocketInterface.quit("quiet");
-
-    assertTrue(result);
-    assertFalse(negativeResult);
-  }
-
-  @Test
-  public void quitHandlesUpperCaseInputAndWhiteSpace() throws IOException {
-    boolean upperCase = serverSocketInterface.quit("QUIT");
-    boolean whiteSpace = serverSocketInterface.quit(" quit    ");
-
-    assertTrue(upperCase);
-    assertTrue(whiteSpace);
-  }
-
-  @Test
   public void closesConnectionAndStreams() throws IOException {
     initializeWithMockStreams();
     serverSocketInterface.acceptClient();
