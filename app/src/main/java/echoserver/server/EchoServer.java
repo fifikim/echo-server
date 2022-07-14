@@ -15,7 +15,7 @@ public class EchoServer {
 
     String clientMessage;
 
-    if ((clientMessage = serverSocketInterface.receiveMessage()) != null) {
+    while ((clientMessage = serverSocketInterface.receiveMessage()) != null) {
       serverSocketInterface.sendEcho(clientMessage);
     }
 

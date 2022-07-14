@@ -5,6 +5,7 @@ import echoserver.SocketIo;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Locale;
 
 public class ServerSocketWrapper implements ServerSocketInterface {
   private final ServerSocket serverSocket;
@@ -54,7 +55,7 @@ public class ServerSocketWrapper implements ServerSocketInterface {
     ConsoleIo.print("EchoServer connection closed.");
   }
 
-  private SocketIo createSocketStreams() throws IOException {
+  public SocketIo createSocketStreams() throws IOException {
     return new SocketIo(clientSocket);
   }
 }
