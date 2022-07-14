@@ -26,10 +26,9 @@ public class SocketIo {
     return in.readLine();
   }
 
-  public boolean closeStreams() throws IOException {
+  public void closeStreams() throws IOException {
     in.close();
     out.close();
-    return true;
   }
 
   private BufferedReader createSocketInput() throws IOException {

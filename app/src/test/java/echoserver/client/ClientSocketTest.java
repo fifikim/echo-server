@@ -1,7 +1,6 @@
 package echoserver.client;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import org.junit.Before;
 import org.junit.Test;
 
 public class ClientSocketTest {
@@ -19,24 +17,38 @@ public class ClientSocketTest {
   private Socket clientSocket;
   private SocketIo socketIo;
   private ClientSocketInterface socketInterface;
+  private ByteArrayInputStream inputStream;
+  private ByteArrayOutputStream outputStream;
 
-  @Before
   public void initialize() throws IOException {
+    inputStream = new ByteArrayInputStream(testMessage.getBytes());
+    outputStream = new ByteArrayOutputStream();
+
     clientSocket = mock(Socket.class);
-    ByteArrayInputStream inputStream = new ByteArrayInputStream(testMessage.getBytes());
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     when(clientSocket.getInputStream()).thenReturn(inputStream);
     when(clientSocket.getOutputStream()).thenReturn(outputStream);
 
     socketIo = mock(SocketIo.class);
     when(socketIo.send(testMessage)).thenReturn(testMessage);
-    when(socketIo.closeStreams()).thenReturn(true);
 
+    socketInterface = new ClientSocketWrapper(clientSocket);
+  }
+
+  public void initializeWithMockStreams() throws IOException {
+    inputStream = mock(ByteArrayInputStream.class);
+    outputStream = mock(ByteArrayOutputStream.class);
+
+    clientSocket = mock(Socket.class);
+    when(clientSocket.getInputStream()).thenReturn(inputStream);
+    when(clientSocket.getOutputStream()).thenReturn(outputStream);
+
+    socketIo = mock(SocketIo.class);
     socketInterface = new ClientSocketWrapper(clientSocket);
   }
 
   @Test
   public void verifiesConnectedToServerPort() throws IOException {
+    initialize();
     int expectedPort = 1234;
     when(clientSocket.getPort()).thenReturn(expectedPort);
     int actualPort = socketInterface.verifyConnection();
@@ -45,7 +57,8 @@ public class ClientSocketTest {
   }
 
   @Test
-  public void getsUserInputtedMessage() {
+  public void getsUserInputtedMessage() throws IOException {
+    initialize();
     ByteArrayInputStream in = new ByteArrayInputStream(testMessage.getBytes());
     System.setIn(in);
 
@@ -57,6 +70,7 @@ public class ClientSocketTest {
 
   @Test
   public void sendsMessageToServer() throws IOException {
+    initialize();
     socketInterface.sendMessage(testMessage);
 
     assertEquals(testMessage, socketInterface.sendMessage(testMessage));
@@ -64,6 +78,7 @@ public class ClientSocketTest {
 
   @Test
   public void receivesResponseFromServer() throws IOException {
+    initialize();
     when(socketIo.receive()).thenReturn(testMessage);
     String actualReceived = socketInterface.receiveResponse();
 
@@ -72,9 +87,11 @@ public class ClientSocketTest {
 
   @Test
   public void closesSocketAndStreams() throws IOException {
+    initializeWithMockStreams();
     socketInterface.closeSocket();
 
     verify(clientSocket).close();
-    assertTrue(socketIo.closeStreams());
+    verify(inputStream).close();
+    verify(outputStream).close();
   }
 }
