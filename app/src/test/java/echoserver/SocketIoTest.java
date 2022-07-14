@@ -3,7 +3,6 @@ package echoserver;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,10 +20,7 @@ public class SocketIoTest {
     inputStream = new ByteArrayInputStream(testMessage.getBytes());
     outputStream = new ByteArrayOutputStream();
 
-    Socket clientSocket = mock(Socket.class);
-    when(clientSocket.getInputStream()).thenReturn(inputStream);
-    when(clientSocket.getOutputStream()).thenReturn(outputStream);
-
+    Socket clientSocket = TestHelpers.socketWithStreams(inputStream, outputStream);
     socketIo = new SocketIo(clientSocket);
   }
 
@@ -32,10 +28,7 @@ public class SocketIoTest {
     inputStream = mock(ByteArrayInputStream.class);
     outputStream = mock(ByteArrayOutputStream.class);
 
-    Socket clientSocket = mock(Socket.class);
-    when(clientSocket.getInputStream()).thenReturn(inputStream);
-    when(clientSocket.getOutputStream()).thenReturn(outputStream);
-
+    Socket clientSocket = TestHelpers.socketWithStreams(inputStream, outputStream);
     socketIo = new SocketIo(clientSocket);
   }
 

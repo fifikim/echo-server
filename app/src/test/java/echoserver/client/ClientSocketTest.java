@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import echoserver.SocketIo;
+import echoserver.TestHelpers;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,10 +31,7 @@ public class ClientSocketTest {
     when(clientSocket.getInputStream()).thenReturn(inputStream);
     when(clientSocket.getOutputStream()).thenReturn(outputStream);
 
-    socketIo = mock(SocketIo.class);
-    when(socketIo.receive()).thenReturn(testMessage);
-    when(socketIo.send(testMessage)).thenReturn(testMessage);
-
+    socketIo = TestHelpers.socketIo(testMessage);
     socketInterface = new ClientSocketWrapper(clientSocket);
   }
 

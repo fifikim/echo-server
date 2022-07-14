@@ -9,80 +9,59 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import echoserver.SocketIo;
+import echoserver.TestHelpers;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import org.junit.After;
 import org.junit.Test;
 
 public class EchoServerTest {
-  private ServerSocket serverSocket;
-  private Socket clientSocket;
   private SocketIo socketIo;
-  private ByteArrayOutputStream mockOut;
-  private String output;
+  private String consoleOutput;
   private final String testMsg = "test message \n second message \n third message";
   private final String nullMsg = "";
 
   public void initialize(String message) throws IOException {
-    setConsoleOutput();
-
-    serverSocket = mock(ServerSocket.class);
-    clientSocket = mock(Socket.class);
-    when(serverSocket.accept()).thenReturn(clientSocket);
-
-    setSocketIo(message);
-
-    ServerSocketInterface serverSocketInterface = new ServerSocketWrapper(serverSocket);
-    EchoServer echoServer = new EchoServer(serverSocketInterface);
-    echoServer.start();
-
-    output = mockOut.toString().strip();
-  }
-
-  private void setConsoleOutput() {
-    mockOut = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(mockOut));
-  }
-
-  private void setSocketIo(String message) throws IOException {
     InputStream inputStream = new ByteArrayInputStream(message.getBytes());
     OutputStream outputStream = new ByteArrayOutputStream();
-    when(clientSocket.getInputStream()).thenReturn(inputStream);
-    when(clientSocket.getOutputStream()).thenReturn(outputStream);
 
-    socketIo = mock(SocketIo.class);
-    when(socketIo.receive()).thenReturn(message);
-    when(socketIo.send(message)).thenReturn(message);
+    ServerSocket serverSocket = mock(ServerSocket.class);
+    Socket clientSocket = TestHelpers.socketWithStreams(inputStream, outputStream);
+    when(serverSocket.accept()).thenReturn(clientSocket);
+
+    socketIo = TestHelpers.socketIo(message);
+
+    ByteArrayOutputStream consoleOut = TestHelpers.setConsoleOutput();
+    TestHelpers.initializeServer(serverSocket);
+    consoleOutput = consoleOut.toString();
   }
 
   @After
-  public void restoreInitialStreams() {
-    System.setOut(System.out);
-    System.setIn(System.in);
+  public void tearDown() {
+    TestHelpers.restoreInitialStreams();
   }
 
   @Test
   public void startsServerSocket() throws IOException {
     initialize(nullMsg);
-    assertThat(output, containsString("EchoServer listening"));
+    assertThat(consoleOutput, containsString("EchoServer listening"));
   }
 
   @Test
   public void acceptsClientConnection() throws IOException {
     initialize(nullMsg);
-    assertThat(output, containsString("EchoClient now connected!"));
+    assertThat(consoleOutput, containsString("EchoClient now connected!"));
   }
 
   @Test
   public void echoesResponseIfMessageReceived() throws IOException {
     initialize(testMsg);
-    assertThat(output, containsString("Message echoed!"));
+    assertThat(consoleOutput, containsString("Message echoed!"));
   }
 
   @Test
@@ -94,15 +73,15 @@ public class EchoServerTest {
   @Test
   public void canReceiveMultipleMessages() throws IOException {
     initialize(testMsg);
-    assertThat(output, containsString("test message"));
-    assertThat(output, containsString("second message"));
-    assertThat(output, containsString("third message"));
+    assertThat(consoleOutput, containsString("test message"));
+    assertThat(consoleOutput, containsString("second message"));
+    assertThat(consoleOutput, containsString("third message"));
   }
 
   @Test
   public void canSendMultipleEchoes() throws IOException {
     initialize(testMsg);
-    int echoCount = (output.split("Message echoed!").length) - 1;
+    int echoCount = (consoleOutput.split("Message echoed!").length) - 1;
 
     assertEquals(3, echoCount);
   }
@@ -111,6 +90,6 @@ public class EchoServerTest {
   public void closesServerConnection() throws IOException {
     initialize(nullMsg);
 
-    assertThat(output, containsString("connection closed"));
+    assertThat(consoleOutput, containsString("connection closed"));
   }
 }
