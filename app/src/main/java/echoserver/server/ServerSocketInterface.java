@@ -8,5 +8,9 @@ public interface ServerSocketInterface {
 
   Socket acceptClient() throws IOException;
 
-  void close() throws IOException;
+  String receiveMessage() throws IOException;
+
+  String sendEcho(String message) throws IOException;
+
+  void closeSocket() throws IOException;
 }

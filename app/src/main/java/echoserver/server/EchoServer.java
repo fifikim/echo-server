@@ -12,6 +12,13 @@ public class EchoServer {
   public void start() throws IOException {
     serverSocketInterface.verifyConnection();
     serverSocketInterface.acceptClient();
-    serverSocketInterface.close();
+
+    String clientMessage;
+
+    if ((clientMessage = serverSocketInterface.receiveMessage()) != null) {
+      serverSocketInterface.sendEcho(clientMessage);
+    }
+
+    serverSocketInterface.closeSocket();
   }
 }
