@@ -15,7 +15,7 @@ public class ClientSocketWrapper implements ClientSocketInterface {
     socketIo = createSocketStreams();
   }
 
-  public int verifyConnection() throws IOException {
+  public int verifyConnection() {
     InetAddress host = clientSocket.getInetAddress();
     int port = clientSocket.getPort();
 
@@ -46,6 +46,10 @@ public class ClientSocketWrapper implements ClientSocketInterface {
     String message = socketIo.receive();
     ConsoleIo.print("Response from EchoServer: " + message);
     return message;
+  }
+
+  public boolean quit(String message) {
+    return "quit".equalsIgnoreCase(message.strip());
   }
 
   public void closeSocket() throws IOException {

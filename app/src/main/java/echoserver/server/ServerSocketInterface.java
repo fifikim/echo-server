@@ -1,5 +1,6 @@
 package echoserver.server;
 
+import echoserver.SocketIo;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -12,5 +13,9 @@ public interface ServerSocketInterface {
 
   String sendEcho(String message) throws IOException;
 
+  boolean quit(String message) throws IOException;
+
   void closeSocket() throws IOException;
+
+  SocketIo createSocketStreams() throws IOException;
 }

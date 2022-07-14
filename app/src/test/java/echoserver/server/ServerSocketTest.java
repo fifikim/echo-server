@@ -1,6 +1,8 @@
 package echoserver.server;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -85,6 +87,24 @@ public class ServerSocketTest {
     serverSocketInterface.sendEcho(testMessage);
 
     assertEquals(testMessage, serverSocketInterface.sendEcho(testMessage));
+  }
+
+  @Test
+  public void quitReturnsTrueIfMessageEqualsQuit() throws IOException {
+    boolean result = serverSocketInterface.quit("quit");
+    boolean negativeResult = serverSocketInterface.quit("quiet");
+
+    assertTrue(result);
+    assertFalse(negativeResult);
+  }
+
+  @Test
+  public void quitHandlesUpperCaseInputAndWhiteSpace() throws IOException {
+    boolean upperCase = serverSocketInterface.quit("QUIT");
+    boolean whiteSpace = serverSocketInterface.quit(" quit    ");
+
+    assertTrue(upperCase);
+    assertTrue(whiteSpace);
   }
 
   @Test

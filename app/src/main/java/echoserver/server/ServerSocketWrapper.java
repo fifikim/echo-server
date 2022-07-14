@@ -5,6 +5,7 @@ import echoserver.SocketIo;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Locale;
 
 public class ServerSocketWrapper implements ServerSocketInterface {
   private final ServerSocket serverSocket;
@@ -47,6 +48,16 @@ public class ServerSocketWrapper implements ServerSocketInterface {
     return message;
   }
 
+  public boolean quit(String message) {
+    boolean quitStatus = "quit".equalsIgnoreCase(message.strip());
+
+    if (quitStatus) {
+      ConsoleIo.print("Session terminated by EchoClient.");
+    }
+
+    return quitStatus;
+  }
+
   public void closeSocket() throws IOException {
     clientSocket.close();
     serverSocket.close();
@@ -54,7 +65,7 @@ public class ServerSocketWrapper implements ServerSocketInterface {
     ConsoleIo.print("EchoServer connection closed.");
   }
 
-  private SocketIo createSocketStreams() throws IOException {
+  public SocketIo createSocketStreams() throws IOException {
     return new SocketIo(clientSocket);
   }
 }

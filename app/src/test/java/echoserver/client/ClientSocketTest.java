@@ -1,6 +1,8 @@
 package echoserver.client;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,6 +31,7 @@ public class ClientSocketTest {
     when(clientSocket.getOutputStream()).thenReturn(outputStream);
 
     socketIo = mock(SocketIo.class);
+    when(socketIo.receive()).thenReturn(testMessage);
     when(socketIo.send(testMessage)).thenReturn(testMessage);
 
     socketInterface = new ClientSocketWrapper(clientSocket);
@@ -79,10 +82,28 @@ public class ClientSocketTest {
   @Test
   public void receivesResponseFromServer() throws IOException {
     initialize();
-    when(socketIo.receive()).thenReturn(testMessage);
+
     String actualReceived = socketInterface.receiveResponse();
 
     assertEquals(testMessage, actualReceived);
+  }
+
+  @Test
+  public void quitReturnsTrueIfMessageEqualsQuit() throws IOException {
+    boolean result = socketInterface.quit("quit");
+    boolean negativeResult = socketInterface.quit("quiet");
+
+    assertTrue(result);
+    assertFalse(negativeResult);
+  }
+
+  @Test
+  public void quitHandlesUpperCaseInputAndWhiteSpace() throws IOException {
+    boolean upperCase = socketInterface.quit("QUIT");
+    boolean whiteSpace = socketInterface.quit(" quit    ");
+
+    assertTrue(upperCase);
+    assertTrue(whiteSpace);
   }
 
   @Test
