@@ -8,8 +8,8 @@ import java.net.Socket;
 
 public class SocketIo {
   private final Socket clientSocket;
-  public BufferedReader in;
-  public PrintWriter out;
+  private final BufferedReader in;
+  private final PrintWriter out;
 
   public SocketIo(Socket clientSocket) throws IOException {
     this.clientSocket = clientSocket;

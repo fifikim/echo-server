@@ -30,16 +30,6 @@ public class SocketIoTest {
   }
 
   @Test
-  public void createsSocketInputStream() {
-    assertNotNull(socketIo.in);
-  }
-
-  @Test
-  public void createsSocketOutputStream() {
-    assertNotNull(socketIo.out);
-  }
-
-  @Test
   public void receivesSocketStreamInput() throws IOException {
     String actualReceived = socketIo.receive();
 
