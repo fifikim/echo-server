@@ -9,7 +9,7 @@ public class ConsoleIo {
     System.out.println(output);
   }
 
-  public static void err(String message, Exception e) {
+  public static void err(String message, IOException e) {
     System.out.println(message);
     System.out.println(e);
     System.exit(1);
