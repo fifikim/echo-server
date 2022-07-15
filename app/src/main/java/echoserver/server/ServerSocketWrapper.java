@@ -18,7 +18,7 @@ public class ServerSocketWrapper implements ServerSocketInterface {
 
   public String assignId() {
     String id = "EchoClient" + clientSocket.getPort();
-    ConsoleIo.print(clientId + " now connected at "
+    ConsoleIo.print(id + " now connected at "
             + clientSocket.getInetAddress().getHostAddress() + "!");
 
     return id;
