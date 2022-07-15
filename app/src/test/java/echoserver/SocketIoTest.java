@@ -20,7 +20,7 @@ public class SocketIoTest {
     inputStream = new ByteArrayInputStream(testMessage.getBytes());
     outputStream = new ByteArrayOutputStream();
 
-    Socket clientSocket = TestHelpers.socketWithStreams(inputStream, outputStream);
+    Socket clientSocket = TestHelpers.socket(inputStream, outputStream, 90210);
     socketIo = new SocketIo(clientSocket);
   }
 
@@ -28,7 +28,7 @@ public class SocketIoTest {
     inputStream = mock(ByteArrayInputStream.class);
     outputStream = mock(ByteArrayOutputStream.class);
 
-    Socket clientSocket = TestHelpers.socketWithStreams(inputStream, outputStream);
+    Socket clientSocket = TestHelpers.socket(inputStream, outputStream, 90210);
     socketIo = new SocketIo(clientSocket);
   }
 

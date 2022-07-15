@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.net.ServerSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class TestHelpers {
@@ -38,8 +38,10 @@ public class TestHelpers {
     return socketIo;
   }
 
-  public static Socket socketWithStreams(InputStream in, OutputStream out) throws IOException {
+  public static Socket socket(InputStream in, OutputStream out, int port) throws IOException {
     Socket clientSocket = mock(Socket.class);
+    when(clientSocket.getPort()).thenReturn(port);
+    when(clientSocket.getInetAddress()).thenReturn(InetAddress.getByName("localhost"));
     when(clientSocket.getInputStream()).thenReturn(in);
     when(clientSocket.getOutputStream()).thenReturn(out);
 
@@ -52,10 +54,10 @@ public class TestHelpers {
     echoClient.start();
   }
 
-  public static void initializeServer(ServerSocket serverSocket) throws IOException {
-    ServerSocketInterface serverSocketInterface = new ServerSocketWrapper(serverSocket);
+  public static void initializeServer(Socket clientSocket) throws IOException {
+    ServerSocketInterface serverSocketInterface = new ServerSocketWrapper(clientSocket);
     EchoServer echoServer = new EchoServer(serverSocketInterface);
-    echoServer.start();
+    echoServer.run();
   }
 
 }

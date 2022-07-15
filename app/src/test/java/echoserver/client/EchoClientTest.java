@@ -23,14 +23,13 @@ public class EchoClientTest {
   private String consoleOutput;
   private final String testMsg = "test message";
   private final String nullMsg = "";
-  private final String[] inputs = new String[]{"first", "second", "quit", "ignore me"};
-  private final String multipleMsgs = String.join(System.lineSeparator(), inputs);
+  private final String multipleMsgs = "first \n second \n quit \nignore me";
 
   private void initialize(String message) throws IOException {
     InputStream inputStream = new ByteArrayInputStream(message.getBytes());
     OutputStream outputStream = new ByteArrayOutputStream();
 
-    Socket clientSocket = TestHelpers.socketWithStreams(inputStream, outputStream);
+    Socket clientSocket = TestHelpers.socket(inputStream, outputStream, 90210);
 
     System.setIn(inputStream);
     ByteArrayOutputStream consoleOut = TestHelpers.setConsoleOutput();
@@ -46,7 +45,7 @@ public class EchoClientTest {
     InputStream inputStream = new ByteArrayInputStream(message.getBytes());
     OutputStream outputStream = new ByteArrayOutputStream();
 
-    Socket clientSocket = TestHelpers.socketWithStreams(inputStream, outputStream);
+    Socket clientSocket = TestHelpers.socket(inputStream, outputStream, 90210);
     socketIo = TestHelpers.socketIo(message);
 
     ByteArrayOutputStream consoleOut = TestHelpers.setConsoleOutput();
@@ -91,7 +90,6 @@ public class EchoClientTest {
   @Test
   public void canSendMultipleMessages() throws IOException {
     initialize(multipleMsgs);
-
     int messageCount = (consoleOutput.split("You sent").length) - 1;
 
     assertEquals(2, messageCount);
