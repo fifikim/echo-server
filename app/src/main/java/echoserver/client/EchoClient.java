@@ -14,7 +14,10 @@ public class EchoClient {
 
     String userInput;
 
-    if ((userInput = clientSocketInterface.getMessage()) != null) {
+    while ((userInput = clientSocketInterface.getMessage()) != null) {
+      if (clientSocketInterface.isQuit(userInput)) {
+        break;
+      }
       clientSocketInterface.sendMessage(userInput);
       clientSocketInterface.receiveResponse();
     }

@@ -2,20 +2,24 @@ package echoserver.client;
 
 import echoserver.ConsoleIo;
 import echoserver.SocketIo;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
 
 public class ClientSocketWrapper implements ClientSocketInterface {
   private final Socket clientSocket;
   private final SocketIo socketIo;
+  private BufferedReader consoleIn;
 
-  public ClientSocketWrapper(Socket clientSocket) throws IOException {
+  public ClientSocketWrapper(Socket clientSocket, SocketIo socketIo) {
     this.clientSocket = clientSocket;
-    socketIo = createSocketStreams();
+    this.socketIo = socketIo;
+    consoleIn = new BufferedReader(new InputStreamReader(System.in));
   }
 
-  public int verifyConnection() throws IOException {
+  public int verifyConnection() {
     InetAddress host = clientSocket.getInetAddress();
     int port = clientSocket.getPort();
 
@@ -28,7 +32,7 @@ public class ClientSocketWrapper implements ClientSocketInterface {
   public String getMessage() {
     ConsoleIo.print("Enter your message: ");
     try {
-      String message = ConsoleIo.input();
+      String message = consoleIn.readLine();
       return message;
     } catch (IOException e) {
       ConsoleIo.err("Unable to get message ", e);
@@ -36,10 +40,9 @@ public class ClientSocketWrapper implements ClientSocketInterface {
     return null;
   }
 
-  public String sendMessage(String message) {
+  public void sendMessage(String message) {
     socketIo.send(message);
     ConsoleIo.print("You sent: " + message);
-    return message;
   }
 
   public String receiveResponse() throws IOException {
@@ -48,13 +51,19 @@ public class ClientSocketWrapper implements ClientSocketInterface {
     return message;
   }
 
+  public boolean isQuit(String message) {
+    boolean quitStatus = "quit".equalsIgnoreCase(message.strip());
+
+    if (quitStatus) {
+      ConsoleIo.print("Terminating session...");
+    }
+
+    return quitStatus;
+  }
+
   public void closeSocket() throws IOException {
     clientSocket.close();
     socketIo.closeStreams();
     ConsoleIo.print("EchoClient disconnected.");
-  }
-
-  private SocketIo createSocketStreams() throws IOException {
-    return new SocketIo(clientSocket);
   }
 }

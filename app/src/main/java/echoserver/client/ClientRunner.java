@@ -1,5 +1,6 @@
 package echoserver.client;
 
+import echoserver.SocketIo;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -15,7 +16,8 @@ public class ClientRunner {
     }
 
     Socket clientSocket = new Socket(host, port);
-    ClientSocketWrapper clientSocketWrapper = new ClientSocketWrapper(clientSocket);
+    SocketIo socketIo = new SocketIo(clientSocket);
+    ClientSocketWrapper clientSocketWrapper = new ClientSocketWrapper(clientSocket, socketIo);
     EchoClient echoClient = new EchoClient(clientSocketWrapper);
 
     echoClient.start();

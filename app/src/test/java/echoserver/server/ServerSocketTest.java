@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import echoserver.SocketIo;
+import echoserver.TestHelpers;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,31 +24,24 @@ public class ServerSocketTest {
   private ByteArrayOutputStream outputStream;
 
   public void initialize() throws IOException {
-    serverSocket = mock(ServerSocket.class);
-    clientSocket = mock(Socket.class);
-    when(serverSocket.accept()).thenReturn(clientSocket);
-
     inputStream = new ByteArrayInputStream(testMessage.getBytes());
     outputStream = new ByteArrayOutputStream();
-    when(clientSocket.getInputStream()).thenReturn(inputStream);
-    when(clientSocket.getOutputStream()).thenReturn(outputStream);
 
-    socketIo = mock(SocketIo.class);
-    when(socketIo.send(testMessage)).thenReturn(testMessage);
-    when(socketIo.receive()).thenReturn(testMessage);
+    serverSocket = mock(ServerSocket.class);
+    clientSocket = TestHelpers.socketWithStreams(inputStream, outputStream);
+    when(serverSocket.accept()).thenReturn(clientSocket);
 
+    socketIo = TestHelpers.socketIo(testMessage);
     serverSocketInterface = new ServerSocketWrapper(serverSocket);
   }
 
   public void initializeWithMockStreams() throws IOException {
-    serverSocket = mock(ServerSocket.class);
-    clientSocket = mock(Socket.class);
-    when(serverSocket.accept()).thenReturn(clientSocket);
-
     inputStream = mock(ByteArrayInputStream.class);
     outputStream = mock(ByteArrayOutputStream.class);
-    when(clientSocket.getInputStream()).thenReturn(inputStream);
-    when(clientSocket.getOutputStream()).thenReturn(outputStream);
+
+    serverSocket = mock(ServerSocket.class);
+    clientSocket = TestHelpers.socketWithStreams(inputStream, outputStream);
+    when(serverSocket.accept()).thenReturn(clientSocket);
 
     socketIo = mock(SocketIo.class);
     serverSocketInterface = new ServerSocketWrapper(serverSocket);

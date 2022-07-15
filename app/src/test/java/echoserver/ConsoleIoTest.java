@@ -19,9 +19,8 @@ public class ConsoleIoTest {
   }
 
   @After
-  public void restoreInitialStreams() {
-    System.setOut(System.out);
-    System.setIn(System.in);
+  public void tearDown() {
+    TestHelpers.restoreInitialStreams();
   }
 
   @Test
@@ -29,14 +28,5 @@ public class ConsoleIoTest {
     String message = "Test message";
     ConsoleIo.print(message);
     assertEquals(message, mockOut.toString().strip());
-  }
-
-  @Test
-  public void inputGetsMessageFromTerminal() throws IOException {
-    ByteArrayInputStream in = new ByteArrayInputStream("My test string".getBytes());
-    System.setIn(in);
-
-    String message = "My test string";
-    assertEquals(message, ConsoleIo.input());
   }
 }
