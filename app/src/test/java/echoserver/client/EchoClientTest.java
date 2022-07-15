@@ -1,6 +1,5 @@
 package echoserver.client;
 
-
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
@@ -37,7 +36,7 @@ public class EchoClientTest {
     ByteArrayOutputStream consoleOut = TestHelpers.setConsoleOutput();
 
     socketIo = new SocketIo(clientSocket);
-    TestHelpers.initializeClient(clientSocket);
+    TestHelpers.initializeClient(clientSocket, socketIo);
     consoleOutput = consoleOut.toString();
   }
 
@@ -51,7 +50,7 @@ public class EchoClientTest {
     socketIo = TestHelpers.socketIo(message);
 
     ByteArrayOutputStream consoleOut = TestHelpers.setConsoleOutput();
-    TestHelpers.initializeClient(clientSocket);
+    TestHelpers.initializeClient(clientSocket, socketIo);
     consoleOutput = consoleOut.toString();
   }
 

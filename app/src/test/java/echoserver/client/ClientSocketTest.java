@@ -34,7 +34,7 @@ public class ClientSocketTest {
     when(clientSocket.getOutputStream()).thenReturn(outputStream);
 
     socketIo = TestHelpers.socketIo(testMessage);
-    socketInterface = new ClientSocketWrapper(clientSocket);
+    socketInterface = new ClientSocketWrapper(clientSocket, socketIo);
   }
 
   public void initializeWithMockStreams() throws IOException {
@@ -46,7 +46,7 @@ public class ClientSocketTest {
     when(clientSocket.getOutputStream()).thenReturn(outputStream);
 
     socketIo = mock(SocketIo.class);
-    socketInterface = new ClientSocketWrapper(clientSocket);
+    socketInterface = new ClientSocketWrapper(clientSocket, socketIo);
   }
 
   @After
@@ -76,10 +76,10 @@ public class ClientSocketTest {
 
   @Test
   public void sendsMessageToServer() throws IOException {
-    initialize();
+    initializeWithMockStreams();
     socketInterface.sendMessage(testMessage);
 
-    assertEquals(testMessage, socketInterface.sendMessage(testMessage));
+    verify(socketIo).send(testMessage);
   }
 
   @Test
@@ -94,8 +94,8 @@ public class ClientSocketTest {
   @Test
   public void quitReturnsTrueIfMessageEqualsQuit() throws IOException {
     initialize();
-    boolean result = socketInterface.quit("quit");
-    boolean negativeResult = socketInterface.quit("quiet");
+    boolean result = socketInterface.requestsQuit("quit");
+    boolean negativeResult = socketInterface.requestsQuit("quiet");
 
     assertTrue(result);
     assertFalse(negativeResult);
@@ -104,8 +104,8 @@ public class ClientSocketTest {
   @Test
   public void quitHandlesUpperCaseInputAndWhiteSpace() throws IOException {
     initialize();
-    boolean upperCase = socketInterface.quit("QUIT");
-    boolean whiteSpace = socketInterface.quit(" quit    ");
+    boolean upperCase = socketInterface.requestsQuit("QUIT");
+    boolean whiteSpace = socketInterface.requestsQuit(" quit    ");
 
     assertTrue(upperCase);
     assertTrue(whiteSpace);
@@ -117,7 +117,6 @@ public class ClientSocketTest {
     socketInterface.closeSocket();
 
     verify(clientSocket).close();
-    verify(inputStream).close();
-    verify(outputStream).close();
+    verify(socketIo).closeStreams();
   }
 }

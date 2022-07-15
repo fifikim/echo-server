@@ -46,8 +46,8 @@ public class TestHelpers {
     return clientSocket;
   }
 
-  public static void initializeClient(Socket clientSocket) throws IOException {
-    ClientSocketInterface clientSocketInterface = new ClientSocketWrapper(clientSocket);
+  public static void initializeClient(Socket clientSocket, SocketIo socketIo) throws IOException {
+    ClientSocketInterface clientSocketInterface = new ClientSocketWrapper(clientSocket, socketIo);
     EchoClient echoClient = new EchoClient(clientSocketInterface);
     echoClient.start();
   }

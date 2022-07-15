@@ -13,10 +13,10 @@ public class ClientSocketWrapper implements ClientSocketInterface {
   private final SocketIo socketIo;
   private BufferedReader consoleIn;
 
-  public ClientSocketWrapper(Socket clientSocket) throws IOException {
+  public ClientSocketWrapper(Socket clientSocket, SocketIo socketIo) {
     this.clientSocket = clientSocket;
+    this.socketIo = socketIo;
     consoleIn = new BufferedReader(new InputStreamReader(System.in));
-    socketIo = createSocketStreams();
   }
 
   public int verifyConnection() {
@@ -40,10 +40,9 @@ public class ClientSocketWrapper implements ClientSocketInterface {
     return null;
   }
 
-  public String sendMessage(String message) {
+  public void sendMessage(String message) {
     socketIo.send(message);
     ConsoleIo.print("You sent: " + message);
-    return message;
   }
 
   public String receiveResponse() throws IOException {
@@ -52,7 +51,7 @@ public class ClientSocketWrapper implements ClientSocketInterface {
     return message;
   }
 
-  public boolean quit(String message) {
+  public boolean requestsQuit(String message) {
     boolean quitStatus = "quit".equalsIgnoreCase(message.strip());
 
     if (quitStatus) {
@@ -66,9 +65,5 @@ public class ClientSocketWrapper implements ClientSocketInterface {
     clientSocket.close();
     socketIo.closeStreams();
     ConsoleIo.print("EchoClient disconnected.");
-  }
-
-  private SocketIo createSocketStreams() throws IOException {
-    return new SocketIo(clientSocket);
   }
 }
