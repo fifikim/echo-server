@@ -51,7 +51,7 @@ public class ClientSocketWrapper implements ClientSocketInterface {
     return message;
   }
 
-  public boolean requestsQuit(String message) {
+  public boolean isQuit(String message) {
     boolean quitStatus = "quit".equalsIgnoreCase(message.strip());
 
     if (quitStatus) {

@@ -11,7 +11,7 @@ public interface ClientSocketInterface {
 
   String receiveResponse() throws IOException;
 
-  boolean requestsQuit(String message) throws IOException;
+  boolean isQuit(String message) throws IOException;
 
   void closeSocket() throws IOException;
 }

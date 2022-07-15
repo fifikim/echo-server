@@ -94,8 +94,8 @@ public class ClientSocketTest {
   @Test
   public void quitReturnsTrueIfMessageEqualsQuit() throws IOException {
     initialize();
-    boolean result = socketInterface.requestsQuit("quit");
-    boolean negativeResult = socketInterface.requestsQuit("quiet");
+    boolean result = socketInterface.isQuit("quit");
+    boolean negativeResult = socketInterface.isQuit("quiet");
 
     assertTrue(result);
     assertFalse(negativeResult);
@@ -104,8 +104,8 @@ public class ClientSocketTest {
   @Test
   public void quitHandlesUpperCaseInputAndWhiteSpace() throws IOException {
     initialize();
-    boolean upperCase = socketInterface.requestsQuit("QUIT");
-    boolean whiteSpace = socketInterface.requestsQuit(" quit    ");
+    boolean upperCase = socketInterface.isQuit("QUIT");
+    boolean whiteSpace = socketInterface.isQuit(" quit    ");
 
     assertTrue(upperCase);
     assertTrue(whiteSpace);
