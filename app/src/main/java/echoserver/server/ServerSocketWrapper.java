@@ -3,40 +3,32 @@ package echoserver.server;
 import echoserver.ConsoleIo;
 import echoserver.SocketIo;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Locale;
 
 public class ServerSocketWrapper implements ServerSocketInterface {
-  private final ServerSocket serverSocket;
-  private Socket clientSocket = null;
-  private SocketIo socketIo = null;
+  private final Socket clientSocket;
+  private final SocketIo socketIo;
+  private String clientId;
 
-  public ServerSocketWrapper(ServerSocket serverSocket) {
-    this.serverSocket = serverSocket;
-  }
-
-  public int verifyConnection() {
-    int port = serverSocket.getLocalPort();
-    ConsoleIo.print("EchoServer listening on port " + port + "...");
-
-    return port;
-  }
-
-  public Socket acceptClient() throws IOException {
-    clientSocket = serverSocket.accept();
-    ConsoleIo.print("EchoClient now connected!");
-
+  public ServerSocketWrapper(Socket clientSocket) throws IOException {
+    this.clientSocket = clientSocket;
     socketIo = createSocketStreams();
+    clientId = assignId();
+  }
 
-    return clientSocket;
+  public String assignId() {
+    String id = "EchoClient" + clientSocket.getPort();
+    ConsoleIo.print(id + " now connected at "
+            + clientSocket.getInetAddress().getHostAddress() + "!");
+
+    return id;
   }
 
   public String receiveMessage() throws IOException {
     String message = socketIo.receive();
 
     if (message != null) {
-      ConsoleIo.print("Incoming message from EchoClient: " + message);
+      ConsoleIo.print("Incoming message from " + clientId + ": " + message);
     }
 
     return message;
@@ -44,15 +36,14 @@ public class ServerSocketWrapper implements ServerSocketInterface {
 
   public String sendEcho(String message) {
     socketIo.send(message);
-    ConsoleIo.print("Message echoed!");
+    ConsoleIo.print("Message echoed back to " + clientId + ".");
     return message;
   }
 
   public void closeSocket() throws IOException {
     clientSocket.close();
-    serverSocket.close();
     socketIo.closeStreams();
-    ConsoleIo.print("EchoServer connection closed.");
+    ConsoleIo.print(clientId + " disconnected.");
   }
 
   public SocketIo createSocketStreams() throws IOException {

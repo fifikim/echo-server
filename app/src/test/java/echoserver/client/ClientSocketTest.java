@@ -85,7 +85,6 @@ public class ClientSocketTest {
   @Test
   public void receivesResponseFromServer() throws IOException {
     initialize();
-
     String actualReceived = socketInterface.receiveResponse();
 
     assertEquals(testMessage, actualReceived);

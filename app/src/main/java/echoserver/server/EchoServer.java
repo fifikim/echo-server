@@ -1,24 +1,30 @@
 package echoserver.server;
 
+import echoserver.ConsoleIo;
 import java.io.IOException;
 
-public class EchoServer {
-  private final ServerSocketInterface serverSocketInterface;
+public class EchoServer implements Runnable {
+  private final ServerSocketInterface socketInterface;
 
-  public EchoServer(ServerSocketInterface serverSocketInterface) {
-    this.serverSocketInterface = serverSocketInterface;
+  public EchoServer(ServerSocketInterface socketInterface) {
+    this.socketInterface = socketInterface;
   }
 
-  public void start() throws IOException {
-    serverSocketInterface.verifyConnection();
-    serverSocketInterface.acceptClient();
-
-    String clientMessage;
-
-    while ((clientMessage = serverSocketInterface.receiveMessage()) != null) {
-      serverSocketInterface.sendEcho(clientMessage);
+  @Override
+  public void run() {
+    try {
+      String message;
+      while ((message = socketInterface.receiveMessage()) != null) {
+        socketInterface.sendEcho(message);
+      }
+    } catch (IOException e) {
+      ConsoleIo.err("Unable to accept client connection", e);
+    } finally {
+      try {
+        socketInterface.closeSocket();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
-
-    serverSocketInterface.closeSocket();
   }
 }

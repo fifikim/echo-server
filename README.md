@@ -84,4 +84,8 @@ If you wish to override the default settings for port number and host name, you 
 
 ### Instructions
 
-tbd
+Follow the launch instructions above to first run the server and then one or more instances of the client (each from a separate terminal). 
+
+From the client, enter a message to send to the server. The server will respond with your message echoed.
+
+Enter "quit" to end your session.

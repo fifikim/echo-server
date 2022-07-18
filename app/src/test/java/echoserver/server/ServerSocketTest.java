@@ -28,11 +28,11 @@ public class ServerSocketTest {
     outputStream = new ByteArrayOutputStream();
 
     serverSocket = mock(ServerSocket.class);
-    clientSocket = TestHelpers.socketWithStreams(inputStream, outputStream);
+    clientSocket = TestHelpers.socket(inputStream, outputStream, 90210);
     when(serverSocket.accept()).thenReturn(clientSocket);
 
     socketIo = TestHelpers.socketIo(testMessage);
-    serverSocketInterface = new ServerSocketWrapper(serverSocket);
+    serverSocketInterface = new ServerSocketWrapper(clientSocket);
   }
 
   public void initializeWithMockStreams() throws IOException {
@@ -40,33 +40,22 @@ public class ServerSocketTest {
     outputStream = mock(ByteArrayOutputStream.class);
 
     serverSocket = mock(ServerSocket.class);
-    clientSocket = TestHelpers.socketWithStreams(inputStream, outputStream);
+    clientSocket = TestHelpers.socket(inputStream, outputStream, 90210);
     when(serverSocket.accept()).thenReturn(clientSocket);
 
     socketIo = mock(SocketIo.class);
-    serverSocketInterface = new ServerSocketWrapper(serverSocket);
+    serverSocketInterface = new ServerSocketWrapper(clientSocket);
   }
 
   @Test
-  public void verifiesConnectedToCorrectPort() throws IOException {
+  public void assignsClientId() throws IOException {
     initialize();
-    int expectedPort = 1234;
-    when(serverSocket.getLocalPort()).thenReturn(expectedPort);
-    int actualPort = serverSocketInterface.verifyConnection();
-
-    assertEquals(expectedPort, actualPort);
-  }
-
-  @Test
-  public void acceptsClientConnection() throws IOException {
-    initialize();
-    assertEquals(clientSocket, serverSocketInterface.acceptClient());
+    assertEquals("EchoClient90210", serverSocketInterface.assignId());
   }
 
   @Test
   public void receivesClientMessage() throws IOException {
     initialize();
-    serverSocketInterface.acceptClient();
     String actualReceived = serverSocketInterface.receiveMessage();
 
     assertEquals(testMessage, actualReceived);
@@ -75,7 +64,6 @@ public class ServerSocketTest {
   @Test
   public void echoesClientMessage() throws IOException {
     initialize();
-    serverSocketInterface.acceptClient();
     serverSocketInterface.sendEcho(testMessage);
 
     assertEquals(testMessage, serverSocketInterface.sendEcho(testMessage));
@@ -84,10 +72,8 @@ public class ServerSocketTest {
   @Test
   public void closesConnectionAndStreams() throws IOException {
     initializeWithMockStreams();
-    serverSocketInterface.acceptClient();
     serverSocketInterface.closeSocket();
 
-    verify(serverSocket).close();
     verify(clientSocket).close();
     verify(inputStream).close();
     verify(outputStream).close();

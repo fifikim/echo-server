@@ -30,7 +30,7 @@ public class ClientSocketWrapper implements ClientSocketInterface {
   }
 
   public String getMessage() {
-    ConsoleIo.print("Enter your message: ");
+    ConsoleIo.print("Enter your message (or enter \"quit\" to exit): ");
     try {
       String message = consoleIn.readLine();
       return message;
