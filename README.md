@@ -12,7 +12,7 @@ After the server establishes a connection with the client, the server will accep
   - [Linting](#linting)
   - [Testing](#testing)
 - [Usage](#usage)
-  - [Launching the Game](#launching)
+  - [Launching the Server](#launching)
   - [Instructions](#instructions)
 
 ## Getting Started <a name = "getting_started"></a>
@@ -86,6 +86,6 @@ If you wish to override the default settings for port number and host name, you 
 
 Follow the launch instructions above to first run the server and then one or more instances of the client (each from a separate terminal). 
 
-From the client, enter a message to send to the server. The server will respond with your message echoed.
+From the client, enter a message to send to the server. The server will respond with your message echoed back to you.
 
 Enter "quit" to end your session.
